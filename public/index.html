@@ -826,6 +826,7 @@
       import {
         getAuth,
         signInAnonymously,
+        signInWithCustomToken,
         onAuthStateChanged,
       } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
       // IMPORT deleteDoc, doc, and setDoc for deletion and update capability
@@ -845,11 +846,12 @@
       setLogLevel("Debug");
 
       // --- GLOBAL APP/FIREBASE SETUP ---
-      // Simplified App ID for organization in the database path
-      const appId = "the-agora-fb972";
+      const appId =
+        typeof __app_id !== "undefined" ? __app_id : "default-agora-app-id";
 
-      // --- Hardcoded Firebase Configuration (REQUIRED for standard hosting) ---
-      const firebaseConfig = {
+      // --- Custom Firebase Configuration for Local Use ---
+      // This configuration will be used if the hosting platform's global variable is not available.
+      const localFirebaseConfig = {
         apiKey: "AIzaSyBz2lUOtE1vYC-sUALHpmkTzrZk2ET3aKQ",
         authDomain: "the-agora-fb972.firebaseapp.com",
         projectId: "the-agora-fb972",
@@ -859,6 +861,17 @@
       };
       // ----------------------------------------------------
 
+      // Use platform configuration if available, otherwise use the local config (parsed from string if necessary)
+      const firebaseConfig =
+        typeof __firebase_config !== "undefined"
+          ? JSON.parse(__firebase_config)
+          : localFirebaseConfig;
+
+      const initialAuthToken =
+        typeof __initial_auth_token !== "undefined"
+          ? __initial_auth_token
+          : null;
+
       let db,
         auth,
         currentUserId = "anonymous";
@@ -866,6 +879,17 @@
 
       // Helper function for Auth & Initialization
       async function initializeFirebase() {
+        if (!firebaseConfig) {
+          console.error("Firebase configuration is missing.");
+          document.getElementById("auth-status").textContent =
+            "Error: Firebase config missing.";
+          document
+            .getElementById("auth-status")
+            .classList.replace("text-green-600", "text-red-600");
+          // Even if Firebase initialization fails, we still need to run initAppUI for styling/toggles
+          initAppUI();
+          return;
+        }
         try {
           const app = initializeApp(firebaseConfig);
           db = getFirestore(app);
@@ -873,8 +897,12 @@
 
           document.getElementById("display-app-id").textContent = appId;
 
-          // 1. Authenticate user anonymously
-          await signInAnonymously(auth);
+          // 1. Authenticate user
+          if (initialAuthToken) {
+            await signInWithCustomToken(auth, initialAuthToken);
+          } else {
+            await signInAnonymously(auth);
+          }
 
           // 2. Auth state change listener
           onAuthStateChanged(auth, (user) => {
@@ -895,11 +923,11 @@
               // 3. Start real-time listeners once authenticated
               setupFirestoreListeners();
             } else {
-              // This should not happen immediately after signInAnonymously, but is a safety net
-              currentUserId = crypto.randomUUID();
+              currentUserId = crypto.randomUUID(); // Fallback ID for anonymous operations
               document.getElementById("auth-status").textContent =
-                "Signed out. Public Read only.";
-              document.getElementById("display-user-id").textContent = "N/A";
+                "Signed in Anonymously. Data is public.";
+              document.getElementById("display-user-id").textContent =
+                currentUserId;
             }
           });
 
@@ -918,7 +946,6 @@
 
       // --- FIREBASE ARTICLE LISTENERS ---
       function setupFirestoreListeners() {
-        // Note: The path now uses the hardcoded projectId as appId
         const articlesRef = collection(
           db,
           `/artifacts/${appId}/public/data/articles`
