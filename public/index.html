@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Agora | Ideas That Shape the World</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Google Fonts: Inter (Sans-serif) and Merriweather (Serif) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Custom Tailwind Configuration */
+      tailwind.config = {
+          darkMode: 'class',
+          theme: {
+              extend: {
+                  colors: {
+                      // Color Palette: Deep Navy, Ivory White, Charcoal Gray, Subtle Gold
+                      'navy': '#0A1931',
+                      'ivory': '#F7F7F7',
+                      'charcoal': '#333333',
+                      'gold': '#D4AF37',
+                      'dark-bg': '#1E293B', /* Slightly lighter dark mode background */
+                      'dark-card': '#334155',
+                  },
+                  fontFamily: {
+                      sans: ['Inter', 'sans-serif'],
+                      serif: ['Merriweather', 'serif'],
+                  },
+                  boxShadow: {
+                      'soft': '0 10px 30px rgba(0, 0, 0, 0.08)',
+                      'soft-dark': '0 10px 30px rgba(255, 255, 255, 0.05)',
+                  }
+              }
+          }
+      }
+
+      /* Base styles and scroll effects */
+      body {
+          font-family: 'Inter', sans-serif;
+          background-color: var(--color-bg);
+          color: var(--color-text);
+          transition: background-color 0.5s, color 0.5s;
+      }
+
+      /* Default (Light) Mode Variables */
+      :root {
+          --color-bg: #F7F7F7;
+          --color-text: #333333;
+          --color-primary: #0A1931;
+          --color-secondary: #D4AF37;
+      }
+
+      /* Dark Mode Variables */
+      .dark {
+          --color-bg: #0A1931;
+          --color-text: #F7F7F7;
+          --color-primary: #D4AF37;
+          --color-secondary: #9CA3AF;
+      }
+
+      /* Parallax/Fade-in Effect Class */
+      .fade-on-scroll {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      }
+      .fade-on-scroll.is-visible {
+          opacity: 1;
+          transform: translateY(0);
+      }
+
+      .article-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .article-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      }
+      .dark .article-card:hover {
+          box-shadow: 0 15px 40px rgba(255, 255, 255, 0.05);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-ivory text-charcoal dark:bg-navy dark:text-ivory min-h-screen flex flex-col"
+  >
+    <!-- HEADER / NAVIGATION -->
+    <header
+      class="sticky top-0 z-50 bg-ivory/95 dark:bg-navy/95 backdrop-blur-md shadow-md border-b border-gray-200 dark:border-gray-800"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <a href="#" class="flex items-center space-x-2">
+            <span
+              class="text-xl font-serif font-black text-navy dark:text-gold tracking-wider"
+              >THE AGORA</span
+            >
+          </a>
+
+          <!-- Navigation Links (Hidden on mobile, shown on desktop) -->
+          <nav class="hidden md:flex space-x-8">
+            <a
+              href="#home"
+              class="text-sm font-medium text-charcoal hover:text-gold dark:text-ivory dark:hover:text-gold transition duration-200"
+              >Home</a
+            >
+            <a
+              href="#articles"
+              class="text-sm font-medium text-charcoal hover:text-gold dark:text-ivory dark:hover:text-gold transition duration-200"
+              >Articles</a
+            >
+            <a
+              href="#about"
+              class="text-sm font-medium text-charcoal hover:text-gold dark:text-ivory dark:hover:text-gold transition duration-200"
+              >About</a
+            >
+            <a
+              href="#contact"
+              class="text-sm font-medium text-charcoal hover:text-gold dark:text-ivory dark:hover:text-gold transition duration-200"
+              >Contribute</a
+            >
+            <!-- NEW ADMIN LINK -->
+            <a
+              href="#admin-dashboard"
+              id="admin-link"
+              class="text-sm font-medium text-red-500 hover:text-gold dark:text-red-400 dark:hover:text-gold transition duration-200 font-bold"
+              >Admin</a
+            >
+          </nav>
+
+          <!-- Search and Dark Mode Toggle -->
+          <div class="flex items-center space-x-4">
+            <!-- Updated Search Button -->
+            <button
+              id="search-button"
+              class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-150"
+              title="Go to Article Search"
+            >
+              <svg
+                class="w-5 h-5 text-charcoal dark:text-ivory"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </button>
+            <!-- Dark Mode Toggle -->
+            <button
+              id="dark-mode-toggle"
+              class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-150"
+            >
+              <svg
+                id="sun-icon"
+                class="w-5 h-5 text-charcoal hidden"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                ></path>
+              </svg>
+              <svg
+                id="moon-icon"
+                class="w-5 h-5 text-ivory hidden"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                ></path>
+              </svg>
+            </button>
+            <!-- Mobile Menu Button -->
+            <button
+              id="mobile-menu-button"
+              class="md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-150"
+            >
+              <svg
+                class="w-6 h-6 text-charcoal dark:text-ivory"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Mobile Menu (Hidden by default) -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-ivory dark:bg-navy border-t border-gray-200 dark:border-gray-800"
+      >
+        <a
+          href="#home"
+          class="block py-2 px-4 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
+          >Home</a
+        >
+        <a
+          href="#articles"
+          class="block py-2 px-4 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
+          >Articles</a
+        >
+        <a
+          href="#about"
+          class="block py-2 px-4 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
+          >About</a
+        >
+        <a
+          href="#contact"
+          class="block py-2 px-4 text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
+          >Contribute</a
+        >
+        <a
+          href="#admin-dashboard"
+          class="block py-2 px-4 text-sm font-medium text-red-500 hover:bg-gray-100 dark:hover:bg-gray-800 font-bold"
+          >Admin</a
+        >
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      <!-- 1. HERO SECTION -->
+      <section
+        id="home"
+        class="relative overflow-hidden pt-16 pb-24 md:pt-24 md:pb-32 bg-navy dark:bg-dark-bg transition-colors duration-500"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <!-- Thought-provoking Tagline -->
+          <h1
+            class="font-serif text-5xl sm:text-6xl lg:text-7xl font-extrabold text-ivory mb-6 leading-tight fade-on-scroll"
+          >
+            Ideas That <span class="text-gold">Shape the World.</span>
+          </h1>
+          <p
+            class="text-xl sm:text-2xl text-gray-300 max-w-3xl mx-auto mb-10 fade-on-scroll"
+            style="transition-delay: 0.2s"
+          >
+            Analytical articles on economic, political, social, and
+            philosophical issues from an international perspective.
+          </p>
+
+          <!-- Newsletter Callout -->
+          <div class="fade-on-scroll" style="transition-delay: 0.4s">
+            <a
+              href="#newsletter"
+              class="inline-block px-8 py-3 bg-gold text-navy font-semibold text-lg rounded-lg shadow-xl hover:bg-yellow-400 transition duration-300 transform hover:scale-105"
+            >
+              Join The Agora Newsletter
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. FEATURED ARTICLES -->
+      <section
+        id="featured"
+        class="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <h2
+          class="text-4xl font-serif font-bold mb-12 border-l-4 border-gold pl-4 text-charcoal dark:text-ivory fade-on-scroll"
+        >
+          Featured Analysis
+        </h2>
+
+        <!-- Dynamic Content Container -->
+        <div id="featured-articles-container" class="grid md:grid-cols-3 gap-8">
+          <p
+            class="md:col-span-3 text-center text-lg text-gray-500 dark:text-gray-400"
+          >
+            <span id="featured-loading-message"
+              >Loading featured articles...</span
+            >
+          </p>
+          <!-- Articles will be rendered here by JavaScript -->
+        </div>
+      </section>
+
+      <!-- 3. ARTICLE LIST / GRID -->
+      <section
+        id="articles"
+        class="py-16 md:py-24 bg-gray-50 dark:bg-dark-bg transition-colors duration-500"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2
+            class="text-4xl font-serif font-bold mb-10 border-l-4 border-gold pl-4 text-charcoal dark:text-ivory fade-on-scroll"
+          >
+            The Latest Analyses
+          </h2>
+
+          <!-- Search and Filter Bar -->
+          <div
+            class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-10 fade-on-scroll"
+            style="transition-delay: 0.2s"
+          >
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search by title or author..."
+              class="flex-grow p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-gold focus:border-gold dark:bg-dark-card dark:text-ivory"
+            />
+            <select
+              id="topic-filter"
+              class="p-3 border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-dark-card dark:text-ivory"
+            >
+              <option value="all">All Topics</option>
+              <option value="economy">Economy</option>
+              <option value="politics">Politics</option>
+              <option value="society">Society</option>
+              <option value="philosophy">Philosophy</option>
+            </select>
+          </div>
+
+          <!-- Article Grid -->
+          <div
+            id="article-grid"
+            class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            <p
+              class="col-span-full text-center text-gray-500 dark:text-gray-400"
+              id="article-list-message"
+            >
+              No articles found. Use the Admin page to add one.
+            </p>
+            <!-- Articles will be rendered here by JavaScript -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. SINGLE ARTICLE MOCKUP (Uses static placeholder content for now) -->
+      <section
+        id="article-sample"
+        class="py-16 md:py-24 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        <div class="max-w-3xl mx-auto">
+          <header
+            class="mb-10 border-b pb-6 border-gray-200 dark:border-gray-700"
+          >
+            <span
+              class="text-sm font-semibold text-gold uppercase tracking-widest mb-2 block"
+              >Politics | September 12, 2025</span
+            >
+            <h1
+              class="font-serif text-4xl sm:text-5xl font-extrabold mb-4 leading-tight"
+            >
+              The Slow Erosion of Multilateralism: A Post-Hegemonic World Order
+            </h1>
+            <div
+              class="flex items-center text-gray-500 dark:text-gray-400 text-base space-x-2"
+            >
+              <span
+                >By
+                <span class="font-semibold text-navy dark:text-ivory"
+                  >Dr. Alistair Finch</span
+                ></span
+              >
+              <span>· 12 min read</span>
+            </div>
+          </header>
+
+          <!-- AI Summary Widget -->
+          <div
+            class="mb-8 p-4 bg-gray-100 dark:bg-dark-card rounded-lg border-l-4 border-gold shadow-sm fade-on-scroll"
+          >
+            <h5 class="font-bold text-lg mb-2 flex items-center">
+              <svg
+                class="w-5 h-5 mr-2 text-gold"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v5a1 1 0 102 0V8z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              AI Summary (The Argument in Brief)
+            </h5>
+            <div
+              id="ai-summary-content"
+              class="text-sm italic text-gray-600 dark:text-gray-300 hidden"
+            >
+              **Summary:** The article argues that contemporary multilateralism
+              is being undermined by a dual pressure: the rise of aggressive
+              nationalist politics in major economies and the structural
+              ambiguity of a multipolar world lacking a clear hegemon. This
+              shift forces smaller nations to navigate complex, often
+              contradictory, trade and security alliances, ultimately slowing
+              down collective action on global issues like climate change and
+              pandemics. The author suggests a return to "minilateralism" among
+              ideologically aligned groups as a necessary, if imperfect,
+              temporary solution.
+            </div>
+            <button
+              id="generate-summary-button"
+              class="mt-2 text-gold hover:text-yellow-600 text-sm font-medium transition duration-200"
+            >
+              Generate Summary
+            </button>
+          </div>
+
+          <!-- Article Body -->
+          <div
+            class="prose dark:prose-invert max-w-none text-lg leading-relaxed space-y-6"
+          >
+            <p
+              class="first-letter:text-6xl first-letter:font-serif first-letter:float-left first-letter:mr-3 first-letter:font-bold first-letter:text-gold dark:first-letter:text-gold fade-on-scroll"
+            >
+              The bedrock of the post-Cold War order was the tacit, sometimes
+              strained, acceptance of a multilateral framework. Institutions
+              from the WTO to the UN were built on the premise that collective
+              security and economic integration were universally beneficial.
+              Today, that consensus is collapsing, not with a bang, but with the
+              quiet, deliberate withdrawal of influence by states prioritizing
+              domestic gain over international stability.
+            </p>
+            <h3
+              class="font-serif text-2xl font-bold border-l-2 border-gold pl-3 pt-2"
+            >
+              The Nationalist Turn
+            </h3>
+            <p>
+              Nationalist politics, once considered an aberration, has cemented
+              itself as a dominant governing philosophy. This is not merely
+              economic protectionism; it is a fundamental rejection of shared
+              sovereignty. When states view global governance as a zero-sum
+              game, the incentive to invest in diplomatic, economic, and
+              military cooperation dissipates. This creates a vacuum, but one
+              that is quickly filled by informal, ad-hoc alliances.
+            </p>
+            <blockquote
+              class="border-l-4 border-navy pl-4 italic text-gray-700 dark:text-gray-300"
+            >
+              "The challenge of the 21st century is not the competition between
+              ideologies, but the competition between interconnectedness and
+              isolation. The former demands cooperation; the latter breeds
+              uncertainty."
+            </blockquote>
+            <p>
+              The true cost of this erosion is seen in the global commons—areas
+              that require universal participation, such as climate change and
+              public health. Without a strong collective mechanism, the 'tragedy
+              of the commons' plays out on a geopolitical scale, where
+              short-term national interests override long-term planetary
+              necessity.
+            </p>
+          </div>
+
+          <!-- Comments Mockup -->
+          <div class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <h4 class="font-serif text-3xl font-bold mb-6">
+              Discussion & Dialogue
+            </h4>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              *Comment system mock-up. Full implementation requires a more
+              complex user authentication system.*
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ADMIN DASHBOARD (NEW FEATURE) -->
+      <section
+        id="admin-dashboard"
+        class="py-16 md:py-24 bg-gray-50 dark:bg-dark-bg transition-colors duration-500"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2
+            class="text-4xl font-serif font-bold mb-10 border-l-4 border-red-500 pl-4 text-charcoal dark:text-ivory fade-on-scroll"
+          >
+            Admin Dashboard
+          </h2>
+          <p class="mb-8 text-red-600 dark:text-red-400 font-medium">
+            Content Management System (CMS) for The Agora. Only the current user
+            can add/manage articles in this prototype.
+          </p>
+
+          <!-- Status Panel -->
+          <div
+            class="mb-12 p-4 rounded-xl shadow-soft dark:shadow-soft-dark bg-white dark:bg-dark-card border border-gray-100 dark:border-gray-700 fade-on-scroll"
+          >
+            <p class="font-semibold text-sm mb-2">System Status:</p>
+            <p
+              id="auth-status"
+              class="text-xs text-green-600 dark:text-green-400"
+            >
+              Authenticating...
+            </p>
+            <p class="text-xs mt-1">
+              **App ID:**
+              <span id="display-app-id" class="font-mono">Loading...</span>
+              **User ID:**
+              <span id="display-user-id" class="font-mono">Loading...</span>
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-12">
+            <!-- Article Creation Form -->
+            <div class="fade-on-scroll">
+              <h3 class="font-serif text-3xl font-bold mb-6 border-b pb-3">
+                1. Add New Article
+              </h3>
+              <form
+                id="add-article-form"
+                class="space-y-4 p-6 rounded-xl bg-white dark:bg-dark-card shadow-lg"
+              >
+                <input
+                  type="text"
+                  id="article-title"
+                  placeholder="Title (e.g., The Future of Global Trade)"
+                  required
+                  class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+                />
+                <input
+                  type="text"
+                  id="article-author"
+                  placeholder="Author Name"
+                  required
+                  class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+                />
+                <select
+                  id="article-topic"
+                  required
+                  class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+                >
+                  <option value="" disabled selected>Select Topic</option>
+                  <option value="economy">Economy</option>
+                  <option value="politics">Politics</option>
+                  <option value="society">Society</option>
+                  <option value="philosophy">Philosophy</option>
+                </select>
+                <textarea
+                  id="article-summary"
+                  placeholder="Summary / Teaser (max 3 lines)"
+                  rows="3"
+                  required
+                  class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+                ></textarea>
+                <textarea
+                  id="article-content"
+                  placeholder="Full Article Content (for single-article view)"
+                  rows="8"
+                  required
+                  class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+                ></textarea>
+
+                <button
+                  type="submit"
+                  class="w-full py-3 bg-red-600 text-ivory font-semibold rounded-lg hover:bg-red-700 transition duration-300"
+                >
+                  Publish New Article
+                </button>
+                <p
+                  id="article-message"
+                  class="text-sm text-center pt-2 hidden"
+                ></p>
+              </form>
+            </div>
+
+            <!-- Article List for Management -->
+            <div class="fade-on-scroll" style="transition-delay: 0.1s">
+              <h3 class="font-serif text-3xl font-bold mb-6 border-b pb-3">
+                2. Published Articles (Real-Time)
+              </h3>
+              <div id="admin-article-list" class="space-y-4">
+                <!-- Articles will be rendered here by JavaScript -->
+                <p
+                  id="admin-list-message"
+                  class="text-center text-gray-500 dark:text-gray-400"
+                >
+                  Loading articles...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. ABOUT, CONTACT, AND NEWSLETTER SECTIONS -->
+      <section
+        id="about"
+        class="py-16 md:py-24 bg-navy text-ivory dark:bg-dark-card transition-colors duration-500"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2
+            class="text-4xl font-serif font-bold mb-8 border-l-4 border-gold pl-4 fade-on-scroll"
+          >
+            Our Mission: The Agora
+          </h2>
+          <div class="grid md:grid-cols-2 gap-12">
+            <div class="fade-on-scroll">
+              <h3 class="font-serif text-3xl font-bold mb-4 text-gold">
+                Intellectual & Analytical Goals
+              </h3>
+              <p class="text-lg leading-relaxed">
+                The Agora is founded on the principle that informed dialogue is
+                the only path to a stable, equitable global future. We seek to
+                publish rigorous, evidence-based analyses that transcend
+                partisan divides and challenge conventional thinking across the
+                disciplines of political science, economics, sociology, and
+                philosophy. We are a platform for deep thought, not
+                sensationalism, inviting academics, students, and professionals
+                to engage with the ideas that truly move the world.
+              </p>
+            </div>
+            <div
+              id="contact"
+              class="fade-on-scroll"
+              style="transition-delay: 0.1s"
+            >
+              <h3 class="font-serif text-3xl font-bold mb-4 text-gold">
+                Contribute & Collaborate
+              </h3>
+              <form id="contact-form" class="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  class="w-full p-3 rounded border border-gray-600 dark:border-gray-500 bg-navy dark:bg-dark-card/80 text-ivory placeholder-gray-400 focus:ring-gold focus:border-gold"
+                />
+                <input
+                  type="email"
+                  placeholder="Your Email"
+                  class="w-full p-3 rounded border border-gray-600 dark:border-gray-500 bg-navy dark:bg-dark-card/80 text-ivory placeholder-gray-400 focus:ring-gold focus:border-gold"
+                />
+                <textarea
+                  placeholder="Your Message or Submission Idea"
+                  rows="4"
+                  class="w-full p-3 rounded border border-gray-600 dark:border-gray-500 bg-navy dark:bg-dark-card/80 text-ivory placeholder-gray-400 focus:ring-gold focus:border-gold"
+                ></textarea>
+                <button
+                  type="submit"
+                  class="w-full py-3 bg-gold text-navy font-semibold rounded hover:bg-yellow-400 transition duration-300"
+                >
+                  Send Message / Submission
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter Popup/Section Mockup (Shown explicitly at the bottom) -->
+      <section
+        id="newsletter"
+        class="py-16 bg-ivory dark:bg-navy transition-colors duration-500"
+      >
+        <div
+          class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8 border border-gold rounded-xl shadow-soft dark:shadow-soft-dark fade-on-scroll"
+        >
+          <h3
+            class="font-serif text-3xl font-bold mb-3 text-charcoal dark:text-ivory"
+          >
+            Join The Agora
+          </h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-6">
+            Get weekly insights that challenge conventional thinking directly in
+            your inbox.
+          </p>
+          <form class="flex flex-col sm:flex-row gap-3">
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              required
+              class="flex-grow p-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-gold focus:border-gold dark:bg-dark-card dark:text-ivory"
+            />
+            <button
+              type="submit"
+              class="p-3 bg-navy text-ivory dark:bg-gold dark:text-navy font-semibold rounded-lg hover:opacity-90 transition duration-300"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer
+      class="bg-charcoal text-gray-400 py-10 dark:bg-dark-card/80 transition-colors duration-500"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center"
+      >
+        <div class="text-sm">
+          &copy; <span id="current-year">2024</span> The Agora. All rights
+          reserved.
+        </div>
+        <div class="flex space-x-6 mt-4 md:mt-0">
+          <a
+            href="#about"
+            class="hover:text-gold transition duration-200 text-sm"
+            >Privacy Policy</a
+          >
+          <a
+            href="#contact"
+            class="hover:text-gold transition duration-200 text-sm"
+            >Terms of Use</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- EDIT ARTICLE MODAL (Hidden by default) -->
+    <div
+      id="edit-article-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-80 z-50 flex items-center justify-center hidden"
+    >
+      <div
+        class="bg-ivory dark:bg-dark-bg p-8 rounded-xl shadow-2xl max-w-lg w-full m-4"
+      >
+        <div class="flex justify-between items-center mb-6 border-b pb-3">
+          <h3
+            class="font-serif text-2xl font-bold text-charcoal dark:text-ivory"
+          >
+            Edit Article
+          </h3>
+          <button
+            onclick="closeEditModal()"
+            class="text-gray-500 hover:text-red-500"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <form id="edit-article-form" class="space-y-4">
+          <input type="hidden" id="edit-article-id" />
+          <input
+            type="text"
+            id="edit-article-title"
+            placeholder="Title"
+            required
+            class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+          />
+          <input
+            type="text"
+            id="edit-article-author"
+            placeholder="Author Name"
+            required
+            class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+          />
+          <select
+            id="edit-article-topic"
+            required
+            class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+          >
+            <option value="economy">Economy</option>
+            <option value="politics">Politics</option>
+            <option value="society">Society</option>
+            <option value="philosophy">Philosophy</option>
+          </select>
+          <textarea
+            id="edit-article-summary"
+            placeholder="Summary / Teaser"
+            rows="3"
+            required
+            class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+          ></textarea>
+          <textarea
+            id="edit-article-content"
+            placeholder="Full Article Content"
+            rows="8"
+            required
+            class="w-full p-3 rounded border border-gray-300 dark:border-gray-600 focus:ring-gold focus:border-gold dark:bg-navy dark:text-ivory"
+          ></textarea>
+
+          <button
+            type="submit"
+            class="w-full py-3 bg-gold text-navy font-semibold rounded-lg hover:bg-yellow-400 transition duration-300"
+          >
+            Save Changes
+          </button>
+          <p
+            id="edit-article-message"
+            class="text-sm text-center pt-2 hidden"
+          ></p>
+        </form>
+      </div>
+    </div>
+
+    <script type="module">
+      // --- FIREBASE IMPORTS ---
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInAnonymously,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      // IMPORT deleteDoc, doc, and setDoc for deletion and update capability
+      import {
+        getFirestore,
+        collection,
+        onSnapshot,
+        query,
+        addDoc,
+        deleteDoc,
+        doc,
+        setDoc,
+        serverTimestamp,
+        setLogLevel,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      setLogLevel("Debug");
+
+      // --- GLOBAL APP/FIREBASE SETUP ---
+      // Simplified App ID for organization in the database path
+      const appId = "the-agora-fb972";
+
+      // --- Hardcoded Firebase Configuration (REQUIRED for standard hosting) ---
+      const firebaseConfig = {
+        apiKey: "AIzaSyBz2lUOtE1vYC-sUALHpmkTzrZk2ET3aKQ",
+        authDomain: "the-agora-fb972.firebaseapp.com",
+        projectId: "the-agora-fb972",
+        storageBucket: "the-agora-fb972.firebasestorage.app",
+        messagingSenderId: "730530033751",
+        appId: "1:730530033751:web:26e394c9e5b447e1fbb312",
+      };
+      // ----------------------------------------------------
+
+      let db,
+        auth,
+        currentUserId = "anonymous";
+      let articles = []; // Global state for articles
+
+      // Helper function for Auth & Initialization
+      async function initializeFirebase() {
+        try {
+          const app = initializeApp(firebaseConfig);
+          db = getFirestore(app);
+          auth = getAuth(app);
+
+          document.getElementById("display-app-id").textContent = appId;
+
+          // 1. Authenticate user anonymously
+          await signInAnonymously(auth);
+
+          // 2. Auth state change listener
+          onAuthStateChanged(auth, (user) => {
+            if (user) {
+              currentUserId = user.uid;
+              document.getElementById(
+                "auth-status"
+              ).textContent = `Authenticated (User ID: ${currentUserId.substring(
+                0,
+                8
+              )}...)`;
+              document
+                .getElementById("auth-status")
+                .classList.replace("text-red-600", "text-green-600");
+              document.getElementById("display-user-id").textContent =
+                currentUserId;
+
+              // 3. Start real-time listeners once authenticated
+              setupFirestoreListeners();
+            } else {
+              // This should not happen immediately after signInAnonymously, but is a safety net
+              currentUserId = crypto.randomUUID();
+              document.getElementById("auth-status").textContent =
+                "Signed out. Public Read only.";
+              document.getElementById("display-user-id").textContent = "N/A";
+            }
+          });
+
+          // 4. Run UI logic
+          initAppUI();
+        } catch (error) {
+          console.error("Firebase Initialization Error:", error);
+          document.getElementById(
+            "auth-status"
+          ).textContent = `Error: ${error.message}`;
+          document
+            .getElementById("auth-status")
+            .classList.replace("text-green-600", "text-red-600");
+        }
+      }
+
+      // --- FIREBASE ARTICLE LISTENERS ---
+      function setupFirestoreListeners() {
+        // Note: The path now uses the hardcoded projectId as appId
+        const articlesRef = collection(
+          db,
+          `/artifacts/${appId}/public/data/articles`
+        );
+        const q = query(articlesRef);
+
+        onSnapshot(
+          q,
+          (snapshot) => {
+            articles = [];
+            snapshot.forEach((doc) => {
+              articles.push({ id: doc.id, ...doc.data() });
+            });
+
+            // Sort by creation date (newest first)
+            articles.sort((a, b) => {
+              // Handle cases where serverTimestamp hasn't resolved yet
+              const timeA =
+                a.createdAt && a.createdAt.toDate
+                  ? a.createdAt.toDate().getTime()
+                  : 0;
+              const timeB =
+                b.createdAt && b.createdAt.toDate
+                  ? b.createdAt.toDate().getTime()
+                  : 0;
+              return timeB - timeA;
+            });
+
+            renderArticles();
+            renderAdminList();
+          },
+          (error) => {
+            console.error("Error fetching articles:", error);
+            document.getElementById("article-list-message").textContent =
+              "Error loading articles.";
+          }
+        );
+      }
+
+      // --- RENDERING FUNCTIONS ---
+
+      function formatTimestamp(timestamp) {
+        if (!timestamp || !timestamp.toDate) {
+          // Return a generic date if timestamp is missing or still pending (e.g., serverTimestamp)
+          return "Pending...";
+        }
+        return new Date(timestamp.toDate()).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      function renderArticleCard(article, isFeatured = false) {
+        const dateStr = formatTimestamp(article.createdAt);
+        const sizeClasses = isFeatured ? "md:col-span-2" : "";
+        const titleClasses = isFeatured ? "text-3xl" : "text-xl";
+        const paddingClasses = isFeatured ? "p-6" : "p-6";
+
+        return `
+                <article data-topic="${
+                  article.topic
+                }" class="article-card rounded-xl overflow-hidden shadow-soft dark:shadow-soft-dark bg-white dark:bg-dark-card border border-gray-100 dark:border-gray-700 fade-on-scroll ${sizeClasses}">
+                    <div class="${paddingClasses}">
+                        <span class="text-xs font-semibold text-gold uppercase tracking-widest mb-2 block">${
+                          article.topic.charAt(0).toUpperCase() +
+                          article.topic.slice(1)
+                        } | ${dateStr}</span>
+                        <a href="#article-sample" class="block" onclick="selectArticle('${
+                          article.id
+                        }')">
+                            <h3 class="font-serif ${titleClasses} font-bold mb-4 leading-snug hover:text-gold transition duration-200">
+                                ${article.title}
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3">
+                                ${article.summary}
+                            </p>
+                        </a>
+                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                            <span class="font-semibold text-navy dark:text-ivory">${
+                              article.author
+                            }</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+      }
+
+      function renderArticles() {
+        const featuredContainer = document.getElementById(
+          "featured-articles-container"
+        );
+        const articleGrid = document.getElementById("article-grid");
+
+        // Clear current content
+        featuredContainer.innerHTML = "";
+        articleGrid.innerHTML = "";
+
+        if (articles.length === 0) {
+          featuredContainer.innerHTML = `<p class="md:col-span-3 text-center text-lg text-gray-500 dark:text-gray-400">No published articles yet. Add one via the Admin link.</p>`;
+          articleGrid.innerHTML = `<p class="col-span-full text-center text-gray-500 dark:text-gray-400">No published articles yet. Add one via the Admin link.</p>`;
+          return;
+        }
+
+        // 1. Render Featured Articles (First 2 articles)
+        const featuredArticles = articles.slice(0, 2);
+        if (featuredArticles.length > 0) {
+          featuredContainer.innerHTML += renderArticleCard(
+            featuredArticles[0],
+            true
+          ); // Large
+        }
+        if (featuredArticles.length > 1) {
+          featuredContainer.innerHTML += renderArticleCard(
+            featuredArticles[1],
+            false
+          ); // Small
+        }
+
+        // 2. Render Article Grid (All articles, excluding the first two if present)
+        articles.forEach((article, index) => {
+          if (index >= 2) {
+            articleGrid.innerHTML += renderArticleCard(article);
+          }
+        });
+
+        // Re-apply scroll observer to new elements
+        document.querySelectorAll(".fade-on-scroll").forEach((element) => {
+          observer.unobserve(element);
+          element.classList.remove("is-visible");
+          observer.observe(element);
+        });
+
+        // Re-apply filter after new render
+        filterArticles();
+
+        // Hide the 'Loading featured articles...' message now that content is loaded
+        const loadingMsg = document.getElementById("featured-loading-message");
+        if (loadingMsg) loadingMsg.style.display = "none";
+      }
+
+      // --- ADMIN RENDERING ---
+      function renderAdminList() {
+        const listContainer = document.getElementById("admin-article-list");
+        listContainer.innerHTML = "";
+
+        if (articles.length === 0) {
+          listContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">No published articles found.</p>`;
+          return;
+        }
+
+        articles.forEach((article) => {
+          const dateStr = formatTimestamp(article.createdAt);
+          const item = document.createElement("div");
+          item.className =
+            "p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-card shadow-sm flex justify-between items-center";
+          item.innerHTML = `
+                    <div>
+                        <p class="font-semibold text-sm line-clamp-1">${article.title}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">By ${article.author} (${dateStr})</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <!-- EDIT button is now hooked up -->
+                        <button class="text-xs text-gold hover:text-yellow-600 font-medium p-1 rounded" onclick="handleEditArticle('${article.id}')">Edit</button>
+                        <!-- DELETE button is now hooked up to the function -->
+                        <button class="text-xs text-red-500 hover:text-red-600 font-medium p-1 rounded" onclick="handleDeleteArticle('${article.id}')">Delete</button>
+                    </div>
+                `;
+          listContainer.appendChild(item);
+        });
+        // Hide the 'Loading articles...' message now that content is loaded
+        const adminMsg = document.getElementById("admin-list-message");
+        if (adminMsg) adminMsg.style.display = "none";
+      }
+
+      // --- ARTICLE MANAGEMENT LOGIC (CRUD - Create, Update, Delete) ---
+
+      // Create Function (Add)
+      async function handleAddArticle(event) {
+        event.preventDefault();
+        const form = event.target;
+        const messageEl = document.getElementById("article-message");
+        messageEl.classList.add("hidden");
+        messageEl.classList.remove("text-green-600", "text-red-600");
+
+        if (!db) {
+          messageEl.textContent = "Error: Database connection failed.";
+          messageEl.classList.remove("hidden");
+          messageEl.classList.add("text-red-600");
+          return;
+        }
+
+        const newArticle = {
+          title: form["article-title"].value,
+          author: form["article-author"].value,
+          topic: form["article-topic"].value,
+          summary: form["article-summary"].value,
+          content: form["article-content"].value,
+          createdAt: serverTimestamp(),
+          createdBy: currentUserId,
+        };
+
+        try {
+          const articlesRef = collection(
+            db,
+            `/artifacts/${appId}/public/data/articles`
+          );
+          await addDoc(articlesRef, newArticle);
+
+          form.reset();
+          messageEl.textContent = "Article successfully published!";
+          messageEl.classList.remove("hidden");
+          messageEl.classList.add("text-green-600");
+        } catch (error) {
+          console.error("Error adding document:", error);
+          messageEl.textContent = `Error publishing: ${error.message}`;
+          messageEl.classList.remove("hidden");
+          messageEl.classList.add("text-red-600");
+        }
+      }
+
+      // Read Function (Get for Edit) and Show Modal
+      window.handleEditArticle = function (articleId) {
+        const article = articles.find((a) => a.id === articleId);
+        if (!article) {
+          console.error("Article not found for editing:", articleId);
+          return;
+        }
+
+        document.getElementById("edit-article-id").value = article.id;
+        document.getElementById("edit-article-title").value = article.title;
+        document.getElementById("edit-article-author").value = article.author;
+        document.getElementById("edit-article-topic").value = article.topic;
+        document.getElementById("edit-article-summary").value = article.summary;
+        document.getElementById("edit-article-content").value = article.content;
+        document.getElementById("edit-article-message").classList.add("hidden");
+
+        document
+          .getElementById("edit-article-modal")
+          .classList.remove("hidden");
+      };
+
+      // Update Function (Save Changes)
+      async function handleUpdateArticle(event) {
+        event.preventDefault();
+        const form = event.target;
+        const messageEl = document.getElementById("edit-article-message");
+        messageEl.classList.add("hidden");
+        messageEl.classList.remove("text-green-600", "text-red-600");
+
+        if (!db) {
+          messageEl.textContent = "Error: Database connection failed.";
+          messageEl.classList.remove("hidden");
+          messageEl.classList.add("text-red-600");
+          return;
+        }
+
+        const articleId = form["edit-article-id"].value;
+        const updatedData = {
+          title: form["edit-article-title"].value,
+          author: form["edit-article-author"].value,
+          topic: form["edit-article-topic"].value,
+          summary: form["edit-article-summary"].value,
+          content: form["edit-article-content"].value,
+          // Note: We don't update createdAt or createdBy
+        };
+
+        try {
+          const articleDocRef = doc(
+            db,
+            `/artifacts/${appId}/public/data/articles/${articleId}`
+          );
+          await setDoc(articleDocRef, updatedData, { merge: true }); // Use setDoc with merge to update fields
+
+          messageEl.textContent = "Article successfully updated!";
+          messageEl.classList.remove("hidden");
+          messageEl.classList.add("text-green-600");
+
+          // Close the modal after a short delay
+          setTimeout(closeEditModal, 1500);
+        } catch (error) {
+          console.error("Error updating document:", error);
+          messageEl.textContent = `Error updating: ${error.message}`;
+          messageEl.classList.remove("hidden");
+          messageEl.classList.add("text-red-600");
+        }
+      }
+
+      // Delete Function
+      window.handleDeleteArticle = async function (articleId) {
+        if (!db) {
+          console.error("Database connection failed. Cannot delete.");
+          return;
+        }
+
+        try {
+          const articleDocRef = doc(
+            db,
+            `/artifacts/${appId}/public/data/articles/${articleId}`
+          );
+          await deleteDoc(articleDocRef);
+          console.log(`Document with ID ${articleId} successfully deleted.`);
+        } catch (error) {
+          console.error("Error removing document: ", error);
+        }
+      };
+
+      // Modal Control Function
+      window.closeEditModal = function () {
+        document.getElementById("edit-article-modal").classList.add("hidden");
+      };
+
+      // --- UI & INTERACTION LOGIC ---
+
+      function initAppUI() {
+        // 1. Dark Mode Toggle (existing logic)
+        const darkModeToggle = document.getElementById("dark-mode-toggle");
+        const sunIcon = document.getElementById("sun-icon");
+        const moonIcon = document.getElementById("moon-icon");
+        const html = document.documentElement;
+
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        let isDark =
+          localStorage.getItem("theme") === "dark" ||
+          (!localStorage.getItem("theme") && prefersDark);
+
+        function applyTheme(dark) {
+          if (dark) {
+            html.classList.add("dark");
+            sunIcon.classList.remove("hidden");
+            moonIcon.classList.add("hidden");
+            localStorage.setItem("theme", "dark");
+          } else {
+            html.classList.remove("dark");
+            sunIcon.classList.add("hidden");
+            moonIcon.classList.remove("hidden");
+            localStorage.setItem("theme", "light");
+          }
+          isDark = dark;
+        }
+
+        applyTheme(isDark);
+        darkModeToggle.addEventListener("click", () => applyTheme(!isDark));
+
+        // 2. Mobile Menu Toggle (existing logic)
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+
+        mobileMenuButton.addEventListener("click", () =>
+          mobileMenu.classList.toggle("hidden")
+        );
+        mobileMenu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () =>
+            mobileMenu.classList.add("hidden")
+          );
+        });
+
+        // 3. Search Icon FIX (scroll to article section)
+        document
+          .getElementById("search-button")
+          .addEventListener("click", () => {
+            document
+              .getElementById("articles")
+              .scrollIntoView({ behavior: "smooth" });
+          });
+
+        // 4. Search and Filter Logic (Updated to work with dynamic articles)
+        const searchInput = document.getElementById("search-input");
+        const topicFilter = document.getElementById("topic-filter");
+
+        window.filterArticles = function () {
+          // Made global to be callable after render
+          const searchTerm = searchInput.value.toLowerCase();
+          const selectedTopic = topicFilter.value;
+          const articleGrid = document.getElementById("article-grid");
+          let foundCount = 0;
+
+          articleGrid.querySelectorAll("article").forEach((article) => {
+            const topic = article.getAttribute("data-topic");
+            const title = article.querySelector("h3").textContent.toLowerCase();
+            const author = article
+              .querySelector(".font-semibold")
+              .textContent.toLowerCase();
+
+            const matchesTopic =
+              selectedTopic === "all" || topic === selectedTopic;
+            const matchesSearch =
+              title.includes(searchTerm) || author.includes(searchTerm);
+
+            if (matchesTopic && matchesSearch) {
+              article.classList.remove("hidden");
+              foundCount++;
+            } else {
+              article.classList.add("hidden");
+            }
+          });
+
+          document
+            .getElementById("article-list-message")
+            .classList.toggle("hidden", foundCount > 0);
+        };
+
+        searchInput.addEventListener("input", filterArticles);
+        topicFilter.addEventListener("change", filterArticles);
+
+        // 5. AI Summary Widget Mock (existing logic)
+        const generateSummaryButton = document.getElementById(
+          "generate-summary-button"
+        );
+        const aiSummaryContent = document.getElementById("ai-summary-content");
+
+        generateSummaryButton.addEventListener("click", () => {
+          if (aiSummaryContent.classList.contains("hidden")) {
+            generateSummaryButton.textContent = "Generating...";
+            generateSummaryButton.disabled = true;
+
+            setTimeout(() => {
+              aiSummaryContent.classList.remove("hidden");
+              generateSummaryButton.textContent = "Hide Summary";
+              generateSummaryButton.disabled = false;
+            }, 800);
+          } else {
+            aiSummaryContent.classList.add("hidden");
+            generateSummaryButton.textContent = "Generate Summary";
+          }
+        });
+
+        // 6. Scroll Fade-in (existing logic)
+        window.observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px",
+          }
+        );
+
+        document.querySelectorAll(".fade-on-scroll").forEach((element) => {
+          observer.observe(element);
+        });
+
+        // 7. Admin Form Submissions
+        document
+          .getElementById("add-article-form")
+          .addEventListener("submit", handleAddArticle);
+        document
+          .getElementById("edit-article-form")
+          .addEventListener("submit", handleUpdateArticle); // Hook up Update function
+
+        // Set current year in footer
+        document.getElementById("current-year").textContent =
+          new Date().getFullYear();
+      }
+
+      // Start everything
+      initializeFirebase();
+    </script>
+  </body>
+</html>
